@@ -10,8 +10,10 @@ def function(x):
     return r
 
 
+
 def increment(min, max, goal):
-    """ Incrementally approach a desired solution. """
+    """ Define a function. Enter min max and goal.
+    Incrementally approach a desired solution. """
     x = min
     dx = (max - min)/10
     for i in range(0,11):
