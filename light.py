@@ -7,16 +7,20 @@ class Light():
     """Light class for light objects"""
     def __init__(self, rayNumber, lens):
         self.rayNumber = rayNumber
-        self.sourceX = -500
-        self.sourceY = 0
+        #print(f"10 rayNumber = {self.rayNumber}")
+        #self.source = [-200, 0]
+        #print(f"source = {self.source}")
         self.ray = []
         self.angle = []
-        self.lensCoords = lens.lensXY
+        self.lensCoords = [lens.lensXY[self.rayNumber], lens.lensXY[self.rayNumber + 1]]
+        #print(f"lensCoords = {self.lensCoords}")
+        #self.source = []
 
     """ LIGHT SOURCES """
     def lightSource(self):
-        """Source Points"""
-        #print(f"self.lensCoords[self.rayNumber][1] = {self.lensCoords[self.rayNumber][1]}")
-        self.sourceY = (self.lensCoords[self.rayNumber][1] + self.lensCoords[self.rayNumber + 1][1]) / 2
-        #print(self.sourceY)
+        """First Lest Segment"""
+        segmentCenter = (self.lensCoords[0][1] + self.lensCoords[1][1]) / 2
+        self.ray.append([-200, segmentCenter])
+        #self.ray.append([-100, segmentCenter])
+        #print(self.ray)
 
