@@ -5,18 +5,16 @@ from light import Light
 from display import Display
 
 lens1Front = 0
-focalPoint = 1000
-lensHeight = 300
-numSegments = 10
+focalPoint = 720
+lensHeight = 180
+numSegments = 100
 n1 = 1.0
 n2 = 1.5
 
 
 lens1 = Lens(focalPoint, lensHeight, numSegments, n1, n2)
 
-print(f"lens1 = {lens1.lensXY}")
-
-lens1.segmentAngle()
+lens1.segments()
 
 
 """ Set number light sources"""
@@ -36,11 +34,17 @@ for i in range(numberLightRays):
 for lightBeam in light:
     lightBeam.lightSource()
 
-for i in range(numSegments):
-    pass
-    #lens1.segmentAngle(lens1.lensXY[i])
+for lightBeam in light:
+    lightBeam.rayLensIntersection(lens1)
 
-#"""
+for lightBeam in light:
+    lightBeam.refraction(lens1)
+
+#Extend rays for viewing
+for lightBeam in light:
+    lightBeam.rayExtension(2000)
+
+
 #******************************************8
 toScreen = Display()
 
@@ -56,36 +60,3 @@ for lightBeam in light:
 
 toScreen.display_to_screen()
 
-
-#"""
-
-def approximate(min, max, goal, precision):
-    def increment(min, max, goal):
-        """ Define a function. Enter min max and goal.
-        call function at # call function here
-        Incrementally approach a desired solution. """
-        x = min
-        dx = (max - min) / 10
-        for i in range(0, 11):
-            # call function here
-            if function(x + dx) < goal:
-                x = x + dx
-            elif function(x + dx) > goal:
-                min = x
-                max = x + dx
-                break
-            elif function(x + dx) == goal:
-                min = x + dx
-                max = min
-        return (min, max)
-    while (max - min) > precision:
-        (min, max) = increment(min, max, goal)
-    print(f"x = {(min + max) / 2}")
-    return (min + max) / 2
-
-def function(x):
-    r = x**2
-    return r
-
-
-approximate(0, 30, 400, 0.00000001)
