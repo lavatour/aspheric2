@@ -94,6 +94,26 @@ class LinAlg:
         y = det(d, ydiff) / div
         return x, y
 
+
+    def median(lst):
+        """Return the median of a list"""
+
+        lst.sort()
+
+        # a gives the integer closest to 1/2 length of list
+        middelest = len(lst)/2
+        a = int(middelest)
+
+        if middelest % 1 == 0: # if length of list is ODD!!!
+
+            median = (lst[a] + lst[a+1])/2
+
+        else:   # Length of list is even. Better or worse.
+            median = lst[a + 1]
+
+        return  median
+
+
 def approximate(min, max, goal, precision):
     def increment(min, max, goal):
         """ Define a function. Enter min max and goal.
@@ -121,3 +141,5 @@ def approximate(min, max, goal, precision):
 def function(x):
     r = x**2
     return r
+
+

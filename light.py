@@ -1,6 +1,6 @@
 import math
 
-from lenses import Lens
+from lenses import Lens1
 from calculations import LinAlg
 
 class Light():
@@ -11,7 +11,7 @@ class Light():
         #self.source = [-200, 0]
         #print(f"source = {self.source}")
         self.ray = []
-        self.angle = [0]
+        self.angle = [0.0]
         self.lensCoords = [lens.lensXY[self.rayNumber], lens.lensXY[self.rayNumber + 1]]
         self.segmentNumber = []
 
@@ -35,14 +35,21 @@ class Light():
             lX2, lY2 = lens.lensXY[i][0], lens.lensXY[i][1]
             lineL = [[lX1, lY1],[lX2, lY2]]
             intersectionPoint = LinAlg.line_intersection(lineR, lineL)
-            if intersectionPoint[0] >= lX1 and intersectionPoint[0] <= lX2:
-                if intersectionPoint[1] >= lY1 and intersectionPoint[1] <= lY2:
-                    #print(f"40 ray {self.ray},   point {intersectionPoint},   rayNumber + 1 {self.rayNumber+1},    i = {i}")
-                    self.ray.append([intersectionPoint[0], intersectionPoint[1]])
-                    self.segmentNumber.append(i-1) # i-1 because list starts at 0 and i starts at 1
+
+            if intersectionPoint[1] >= lY1 and intersectionPoint[1] <= lY2:
+                #print(f"40 ray {self.ray},   point {intersectionPoint},   rayNumber + 1 {self.rayNumber+1},    i = {i}")
+                self.ray.append([intersectionPoint[0], intersectionPoint[1]])
+                self.segmentNumber.append(i-1) # i-1 because list starts at 0 and i starts at 1
+                break
+
 
     def refraction(self, lens):
         """rayNumber + 1 = lens Segment number."""
+        #print(f"lens.XY = {lens.lensXY}")
+        #print(f"self.segmentNumber[-1] = {self.segmentNumber[-1]}")
+        #print(f"segnumbers = {self.segmentNumber}")
+        #print(f"lens.segmentAngle[self.segmentNumber[-1]] = {lens.segmentAngle[self.segmentNumber[-1]]}")
+
         normalAngle = lens.segmentAngle[self.segmentNumber[-1]] - math.pi/2
         unitNormalVector = [math.cos(normalAngle), math.sin(normalAngle)]
         rayUnitVector = [math.cos(self.angle[-1]), math.sin(self.angle[-1])]
@@ -56,7 +63,7 @@ class Light():
         # Compute angle of refraction
         angleOfRefraction = lens.n1 * math.asin(math.sin(angleOfIncidence) / lens.n2)
         #light angle = normal angle + angle of refraction
-        lightAngle = normalAngle + angleOfRefraction
+        lightAngle = self.angle[-1] + normalAngle + angleOfRefraction
         self.angle.append(lightAngle)
 
         #print(f"51 segmentnumber = {self.segmentNumber[-1]},   segment angle = {lens.segmentAngle[self.segmentNumber[-1]] * 180 / math.pi},   normalAngle = {normalAngle*180/math.pi},    normVector = {unitNormalVector},   rayNormVector = {rayUnitVector}")

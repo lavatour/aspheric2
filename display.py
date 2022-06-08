@@ -23,11 +23,16 @@ class Display():
         pygame.display.set_caption("Lens")
         self.display.fill(self.WHITE)
 
-    def draw_Lens1(self, surface):
+    def draw_Lens1(self, surface, color):
         for point in surface:
             x = point[0]
             y = point[1]
-            pygame.draw.circle(self.display, self.RED,(x + self.OFFSET_X,-y + self.OFFSET_Y),1,1)
+            if color == "RED":
+                pygame.draw.circle(self.display, self.RED,(x + self.OFFSET_X,-y + self.OFFSET_Y),1,1)
+            elif color == "GREEN":
+                pygame.draw.circle(self.display, self.GREEN, (x + self.OFFSET_X, -y + self.OFFSET_Y), 1, 1)
+            else:
+                pygame.draw.circle(self.display, self.BLACK, (x + self.OFFSET_X, -y + self.OFFSET_Y), 1, 1)
 
 
     def draw_Source(self, ray):
@@ -44,7 +49,7 @@ class Display():
             x2, y2 = ray[p+1][0], -ray[p+1][1]
 
 
-            pygame.draw.line(self.display, self.RED, [x1 + self.OFFSET_X, y1 + self.OFFSET_Y], [x2 + self.OFFSET_X, y2 + self.OFFSET_Y])
+            pygame.draw.line(self.display, self.WHITE, [x1 + self.OFFSET_X, y1 + self.OFFSET_Y], [x2 + self.OFFSET_X, y2 + self.OFFSET_Y])
             #print(x1 + self.OFFSET_X, y1 + self.OFFSET_Y)
 
 

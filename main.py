@@ -1,21 +1,33 @@
 """ This will approimate lens shappe for aspheric lens to focus at a single point."""
 
-from lenses import Lens
+from lenses import Lens1
+from lenses import Lens2
 from light import Light
 from display import Display
 
+#numberLightRays = 100
 lens1Front = 0
 focalPoint = 720
 lensHeight = 180
-numSegments = 100
+numSegments = 2000
 n1 = 1.0
-n2 = 1.5
+n2 = 1.495
+
+light = []
+lens1 = Lens1(focalPoint, lensHeight, numSegments, n1, n2)
 
 
-lens1 = Lens(focalPoint, lensHeight, numSegments, n1, n2)
+n1 = 1.5
+n2 = 1.0
+lens2Position = 400
+lens2 = Lens2(n1, n2, lens2Position)
+scaleFactor = 0.5
 
-lens1.segments()
+lens1.focusInner()
 
+lens1.focusOuter()
+
+lens1.focusMiddle()
 
 """ Set number light sources"""
 numberLightRays = len(lens1.lensXY) -1
@@ -23,11 +35,11 @@ numberLightRays = len(lens1.lensXY) -1
 
 
 # Light list for light objects
-light = []
+
 
 """ Create instance of light """
-for i in range(numberLightRays):
-    light.append(Light(i, lens1))
+for rayNumber in range(numberLightRays):
+    light.append(Light(rayNumber, lens1))
 
 
 """ ADD LIGHT SOURCE POINTS """
@@ -40,16 +52,40 @@ for lightBeam in light:
 for lightBeam in light:
     lightBeam.refraction(lens1)
 
-#Extend rays for viewing
 for lightBeam in light:
-    lightBeam.rayExtension(2000)
+    lightBeam.rayExtension(100)
+
+#Find focal point to calculate second lens
+lens2.findfocalPoint(light)
+
+lens2.align1(light)
+
+#lens2.scale(scaleFactor, lens1)
+#lens2.align(light)
+
+for lightBeam in light:
+    lightBeam.rayLensIntersection(lens2)
+    pass
+
+
+for lightBeam in light:
+    #lightBeam.refraction(lens2)
+    pass
+
+for lightBeam in light:
+    #lightBeam.rayExtension(200)
+    pass
+    pass
 
 
 #******************************************8
 toScreen = Display()
 
 #drawLens
-toScreen.draw_Lens1(lens1.lensXY)
+toScreen.draw_Lens1(lens1.lensXY, "RED")
+toScreen.draw_Lens1(lens1.lensXYMiddle, "GREEN")
+toScreen.draw_Lens1(lens1.lensXYOuter, "BLACK")
+toScreen.draw_Lens1(lens2.lensXY, "RED")
 
 for lightBeam in light:
     toScreen.draw_Source(lightBeam.ray)
