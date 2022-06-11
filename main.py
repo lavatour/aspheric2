@@ -9,7 +9,7 @@ from display import Display
 lens1Front = 0
 focalPoint = 720
 lensHeight = 180
-numSegments = 2000
+numSegments = 20
 n1 = 1.0
 n2 = 1.495
 
@@ -19,15 +19,15 @@ lens1 = Lens1(focalPoint, lensHeight, numSegments, n1, n2)
 
 n1 = 1.5
 n2 = 1.0
-lens2Position = 400
+lens2Position = 5000 #DOES NOTHING
 lens2 = Lens2(n1, n2, lens2Position)
-scaleFactor = 0.5
+scaleFactor = 0.2
 
-lens1.focusInner()
+lens1.Inner()
 
-lens1.focusOuter()
+lens1.Outer()
 
-lens1.focusMiddle()
+lens1.Middle()
 
 """ Set number light sources"""
 numberLightRays = len(lens1.lensXY) -1
@@ -65,6 +65,7 @@ lens2.align1(light)
 
 for lightBeam in light:
     lightBeam.rayLensIntersection(lens2)
+    lightBeam.rayLensIntersection(lens2)
     pass
 
 
@@ -73,8 +74,7 @@ for lightBeam in light:
     pass
 
 for lightBeam in light:
-    #lightBeam.rayExtension(200)
-    pass
+    lightBeam.rayExtension(550)
     pass
 
 
@@ -84,7 +84,7 @@ toScreen = Display()
 #drawLens
 toScreen.draw_Lens1(lens1.lensXY, "RED")
 toScreen.draw_Lens1(lens1.lensXYMiddle, "GREEN")
-toScreen.draw_Lens1(lens1.lensXYOuter, "BLACK")
+#toScreen.draw_Lens1(lens1.lensXYOuter, "BLACK")
 toScreen.draw_Lens1(lens2.lensXY, "RED")
 
 for lightBeam in light:

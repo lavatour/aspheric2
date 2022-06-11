@@ -49,7 +49,7 @@ class Display():
             x2, y2 = ray[p+1][0], -ray[p+1][1]
 
 
-            pygame.draw.line(self.display, self.WHITE, [x1 + self.OFFSET_X, y1 + self.OFFSET_Y], [x2 + self.OFFSET_X, y2 + self.OFFSET_Y])
+            pygame.draw.line(self.display, self.BLUE, [x1 + self.OFFSET_X, y1 + self.OFFSET_Y], [x2 + self.OFFSET_X, y2 + self.OFFSET_Y])
             #print(x1 + self.OFFSET_X, y1 + self.OFFSET_Y)
 
 
