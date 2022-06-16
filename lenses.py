@@ -11,70 +11,37 @@ class Lens1():
         self.segmentAngle = []
         self.dy = self.lensHeight / self.numSegs
         self.lensXY = [[0.0, 0.0]]
+        self.lensXYMid = [[0.0, 0.0]]
 
     # print(f"30 thetaRay, theta1, theta2, segAngle, dx, x =  {thetaRay, self.theta1, self.theta2, self.segmentAngle[i]*180/math.pi, dx, x}")
 
-    def Inner(self):
-        """Calculate lens segment position and angle to focus to point fp
-        Build lens segment by segment.
-        1. dY = lens height / number of lens segments
-        2. y = next point for calculating ray angles
-            y = lens[-1][1] + dy
-        3. xDist = distance from fp to top of last ray segment
-            xDist = (lens[-1][0] + dy / tan(segmentAngle[-1]) - fp
-        4. final ray angle from to focal point to a point dy directly above the top of last ray segment.
-            finalRayAngle = math.atan2(xDist, y)
-            ***Check that angle is correct: negative.***
-        5. thetaR: change in angle from initialRayAngle to finalRayAngle
-            Called in calculateAngles
-            thetaR = finalRayAngle - initialRayAngle
-        6. Theta1 per double angle equation, n1, n2, thetaR
-            Called in calculateAngles
-            self.theta1 = math.atan((-self.n2 * math.sin(thetaR)) / (self.n1 - self.n2 * math.cos(thetaR)))
-        7. Theta2 from theta1, n1, n2
-            called in calculateAngles
-            self.theta2 = math.asin(self.n1 * math.sin(self.theta1) / self.n2)
-        8. segment angle
-            called in calculateAngles
-            self.segmentAngle.append(math.pi / 2 - self.theta1 + initialRayAngle)
-        9. dX from dY and segment angle
-        10. append [lens[-1][0] + dx, lens[-1][1] + dy] to lens
-            The entire segment will focus short of the focal point.
+    def findTheta1_Theta2(self, thetaR, n1, n2):
+        """findTheta1_Theta2 documentation
+        n1 sin(theta1) = n2 sin(theta(2)
+        theta1 = theta2 - thetaR
+        theta2 = theta1 + thetaR
+        thetaR = theta2 - theta1
+        n1 sint(theta1) = n2 sin(theta2)
+        n1 sin(theta1) = n2 sin(theta1 + thetaR)
+        n1 sin(theta1) = n2 sin(theta1) cos(thetaR) + n2 sin(thetaR) cos(theta1)
+        n1 sin(theta1) - n2 sin(theta1) cos(thetaR) = n2 sin(thetaR) cos(theta1)
+        sin(theta1) [ n1 - n2 cos(thetaR)] = n2 sin(thetaR) cos(theta1)
+        sin(theta1) / cos(theta1) = [ n2 sin(thetaR) ] / [n1 - n2 cos(thetaR)]
+        tan(theta1) = [ n2 sin(thetaR) ] / [n1 - n2 cos(thetaR)]
+        theta1 = atan[ n2 sin(thetaR) ] / [n1 - n2 cos(thetaR)]
+        ****
+        n1 sin(theta1) = n2 sin(theta2)
+        sin(theta2) = n1 sin(theta1) / n2
+        theta2 = asin[ n1 sin(theta1) / n2 ]
         """
-        segmentAngle = []
-        initialRayAngle = 0.0
 
-        for i in range(self.numSegs):
-            y = self.lensXY[-1][1] + self.dy
-            # y coordinate of lens segments. This is the top of the segment.
-            # This makes the lens focus short of the desired focal pt.
+        theta1 = math.atan(n2 * math.sin(thetaR)  / (n1 - n2 * math.cos(thetaR)))
+        theta2 = math.asin( n1 * math.sin(theta1) / n2 )
+        return theta1, theta2
 
-            xDist = self.fp - self.lensXY[-1][0]
-            # distance from point on lens to focal point
-            finalRayAngle = math.atan(y / xDist)
-            # angle of ray from point on lens to desired focal point
+        pass
 
-            thetaR = finalRayAngle - initialRayAngle
-            # The change in ray direction = theta2 - theta1
-
-            self.theta1 = math.atan((-self.n2 * math.sin(thetaR)) / (self.n1 - self.n2 * math.cos(thetaR)))
-            # theta 1 from angle in derived formula given change in angle from 0 to thetaR
-            # theta 1 = angle of incidence
-
-            self.theta2 = math.asin(self.n1 * math.sin(self.theta1) / self.n2)
-            # angle of refraction using snells law
-
-            self.segmentAngle.append(math.pi / 2 - self.theta1 + initialRayAngle)
-            # segment angle = 90 - angle of incidence + initial ray angle
-
-            dx = self.dy / math.tan(self.segmentAngle[i])
-            # dx from dy and segment angle
-            x = self.lensXY[-1][0] + dx
-            self.lensXY.append([x, y])
-            #print(f"finalRayAngle = {finalRayAngle*180/math.pi}")
-            # print(f"segAngle = {self.segmentAngle[-1]*180/math.pi}")
-
-    def Middle(self):
+    def Inner(self, position):
         """Calculate lens segment position and angle to focus to point fp
         Build lens segment by segment.
         1. dY = lens height / number of lens segments
@@ -83,54 +50,48 @@ class Lens1():
         3. xDist = dist from fp to middle of current segment
             middle current segment approx = lens[-1][0] + dy / tan(segmentAngle)
             xDist = fp = (lens[-1][0] + dy/2 / tan(segmentAngle[-1])
-        4. final ray angle from to focal point to a point dy directly above the top of last ray segment.
+        4. final ray angle from to focal point to a point dy/2 directly above the top of last ray segment.
             Called in calculateAngles
 
-            finalRayAngle = atan(
+            finalRayAngle = atan(atan(y / xDist)
         5. thetaR: change in angle from initialRayAngle to finalRayAngle
         6. Theta1 per double angle equation, n1, n2, thetaR
         7. Theta2 from theta1, n1, n2
         8. segment angle
         9. dX from dY and segment angle
         10. append [lens[-1][0] + dx, lens[-1][1] + dy] to lens
-            The entire segment will focus short of the focal point.
         """
 
-        segmentAngle = []
         initialRayAngle = 0.0
-        self.lensXYMiddle = [[0.0, 0.0]]
 
-        for i in range(self.numSegs):
-            y = self.lensXYMiddle[-1][1]
-            # y coordinate of lens segments
+        for segNum in range(self.numSegs):
 
-            xDist = self.fp - self.lensXYMiddle[-1][0]
-            # distance from bottom of lens segment to intended focal point
+            y = self.lensXY[-1][1] + self.dy / 2
+            print(f"segNum {segNum}    dy {self.dy}    lensXY[-1 {self.lensXY[-1]}    dy/2 {self.dy/2}")
+            if len(self.segmentAngle) > 0:
+                xDist = self.lensXY[-1][0] + self.dy / math.tan(self.segmentAngle[-1]) - self.fp
+            else:
+                xDist = (self.lensXY[-1][0] - self.fp)
 
-            finalRayAngle = math.atan(-(y + self.dy/2) / xDist)  # -dy/2 to set angle at center of lens segment
+            finalRayAngle = math.atan(y / xDist)
 
-            #print(f"65 xDist {xDist}   y + dy/2 {y + self.dy/2}")
-            #print(f"75 y {y}   lensXYMiddle {self.lensXYMiddle}    xDist {xDist}   finalRayAngle = {finalRayAngle * 180 / math.pi}")
-            #TODO rewrite code to use atan2
             thetaR = finalRayAngle - initialRayAngle
-            theta1 = math.atan((-self.n2 * math.sin(thetaR)) / (self.n1 - self.n2 * math.cos(thetaR)))
-            theta2 = math.asin(self.n1 * math.sin(theta1) / self.n2)
-            #print(f"initialRayAngle {initialRayAngle*180/math.pi}   finalRayAngle {finalRayAngle*180/math.pi}   thetaR {thetaR*180/math.pi}   theta1 {theta1*180/math.pi}   theta2 {theta2*180/math.pi}")
-            segmentAngle.append(math.pi / 2 + theta1 + initialRayAngle)
-            #print(f"segmentAngle = {segmentAngle[-1]*180/math.pi}")
-            dx = self.dy / math.tan(segmentAngle[i])
-            x = self.lensXYMiddle[-1][0] + dx
-            y = self.lensXYMiddle[-1][1] + self.dy
-            self.lensXYMiddle.append([x, y])
+            n1, n2 = self.n1, self.n2
+            theta1, theta2 = self.findTheta1_Theta2(thetaR, n1, n2)
+            self.theta1, self.theta2 = theta1, theta2
 
-            #print(f"segmentAngle {segmentAngle}   dx {dx}")
-#        print(f"lensOuter {self.lensXYOuter} \nlenOuter = {len(self.lensXYOuter)} {self.lensXYOuter[0], self.lensXYOuter[-1]}")
-#        print(f"lensInner {self.lensXY} \nlen(lensInner) {len(self.lensXY)}")
-#        print(f"lensMiddle {self.lensXYMiddle} \nlen(lensMiddle) {len(self.lensXYMiddle)}")
+            self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi/2)
+            print(f"y = {y}   xDist = {xDist}   theta1 = {self.theta1*180/math.pi}   segmentAngle = {self.segmentAngle[-1]*180/math.pi}")
+            # segment angle = initial ray angle - angle of incidence + 90
 
 
+            dx = self.dy / math.tan(self.segmentAngle[segNum])
+            # dx from dy and segment angle
 
-
+            self.lensXY.append([self.lensXY[-1][0] + dx, self.lensXY[-1][1] + self.dy])
+            print(f"dx = {dx}   finalRayAngle = {finalRayAngle*180/math.pi}")
+            print()
+            # print(f"segAngle = {self.segmentAngle[-1]*180/math.pi}")
 
 
 
@@ -144,27 +105,10 @@ class Lens1():
 
 
 
-    def Outer(self):
 
-        segmentAngle = []
-        initialRayAngle = 0.0
-        self.lensXYOuter = [[0.0, 0.0]]
 
-        for i in range(self.numSegs):
-            xDist = self.fp - self.lensXYOuter[-1][0]
-            finalRayAngle = math.atan(self.lensXYOuter[-1][1] / xDist)
-            thetaR = finalRayAngle - initialRayAngle
-            theta1 = math.atan((-self.n2 * math.sin(thetaR)) / (self.n1 - self.n2 * math.cos(thetaR)))
-            theta2 = math.asin(self.n1 * math.sin(theta1) / self.n2)
-            segmentAngle.append(math.pi / 2 - theta1 + initialRayAngle)
-            dx = self.dy / math.tan(segmentAngle[i])
-            x = self.lensXYOuter[-1][0] + dx
-            y = self.lensXYOuter[-1][1] + self.dy
-            self.lensXYOuter.append([x, y])
-            #print(f"52 xDist {xDist}   finalRayAngle {finalRayAngle*180/math.pi}   thetaR {thetaR*180/math.pi}")
-            #print(f"theta1 {theta1*180/math.pi}   theta2 {theta2*180/math.pi}   segmentAngle {segmentAngle[i]*180/math.pi}")
-            #print(f"dx = {dx}   lensXYOuter[-1][1] {self.lensXYOuter[-1][1]}")
-        #print(f"segAngle {segmentAngle}")
+
+
 
 
 

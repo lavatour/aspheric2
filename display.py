@@ -30,7 +30,7 @@ class Display():
             if color == "RED":
                 pygame.draw.circle(self.display, self.RED,(x + self.OFFSET_X,-y + self.OFFSET_Y),1,1)
             elif color == "GREEN":
-                pygame.draw.circle(self.display, self.GREEN, (x + self.OFFSET_X, -y + self.OFFSET_Y), 1, 1)
+                pygame.draw.circle(self.display, self.BLUE, (x + self.OFFSET_X, -y + self.OFFSET_Y), 3, 3)
             else:
                 pygame.draw.circle(self.display, self.BLACK, (x + self.OFFSET_X, -y + self.OFFSET_Y), 1, 1)
 
@@ -40,6 +40,11 @@ class Display():
         x = source[0]  + self.OFFSET_X
         y = -source[1] + self.OFFSET_Y  # SET NEGATIVE TO MAKE SOURCE ON UPPER HALF IN IMAGE
         pygame.draw.circle(self.display, self.RED,( x, y), 2, 2)    #
+
+    def draw_FocalPoint(self, fp):
+        x = fp + self.OFFSET_X
+        y = 0 + self.OFFSET_Y
+        pygame.draw.circle(self.display, self.RED, (x, y), 4, 4)
 
     def draw_Rays(self, ray):
         """display rays"""
