@@ -39,7 +39,6 @@ class Lens1():
         theta2 = math.asin( n1 * math.sin(theta1) / n2 )
         return theta1, theta2
 
-        pass
 
     def Inner(self, position):
         """Calculate lens segment position and angle to focus to point fp
@@ -67,7 +66,7 @@ class Lens1():
         for segNum in range(self.numSegs):
 
             y = self.lensXY[-1][1] + self.dy / 2
-            print(f"segNum {segNum}    dy {self.dy}    lensXY[-1 {self.lensXY[-1]}    dy/2 {self.dy/2}")
+            #print(f"segNum {segNum}    dy {self.dy}    lensXY[-1 {self.lensXY[-1]}    dy/2 {self.dy/2}")
             if len(self.segmentAngle) > 0:
                 xDist = self.lensXY[-1][0] + self.dy / math.tan(self.segmentAngle[-1]) - self.fp
             else:
@@ -79,9 +78,10 @@ class Lens1():
             n1, n2 = self.n1, self.n2
             theta1, theta2 = self.findTheta1_Theta2(thetaR, n1, n2)
             self.theta1, self.theta2 = theta1, theta2
+            print(f"theta1 = {theta1}   theta2 {theta2}")
 
             self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi/2)
-            print(f"y = {y}   xDist = {xDist}   theta1 = {self.theta1*180/math.pi}   segmentAngle = {self.segmentAngle[-1]*180/math.pi}")
+            #print(f"y = {y}   xDist = {xDist}   theta1 = {self.theta1*180/math.pi}   segmentAngle = {self.segmentAngle[-1]*180/math.pi}")
             # segment angle = initial ray angle - angle of incidence + 90
 
 
@@ -89,27 +89,9 @@ class Lens1():
             # dx from dy and segment angle
 
             self.lensXY.append([self.lensXY[-1][0] + dx, self.lensXY[-1][1] + self.dy])
-            print(f"dx = {dx}   finalRayAngle = {finalRayAngle*180/math.pi}")
-            print()
+            #print(f"dx = {dx}   finalRayAngle = {finalRayAngle*180/math.pi}")
+            #print()
             # print(f"segAngle = {self.segmentAngle[-1]*180/math.pi}")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 class Lens2():
@@ -140,7 +122,9 @@ class Lens2():
             points.append(fX)
 
         #print(f"focalPoints = {points[0], points[-1]}")
-        fp = LinAlg.median(points)
+
+        min, fp, max = LinAlg.median(points)
+        #print(f"min = {min}   fp = {fp}   max = {max}")
         return fp
 
 
@@ -183,9 +167,18 @@ class Lens2():
             initialRayAngle = i.angle[-1]
             finalRayAngle = 0.0
             thetaR = finalRayAngle - initialRayAngle
-            self.theta1 = math.atan((-self.n2 * math.sin(thetaR)) / (self.n1 - self.n2 * math.cos(thetaR)))
-            self.theta2 = math.asin(self.n1 * math.sin(self.theta1) / self.n2)
-            self.segmentAngle.append(math.pi / 2 + self.theta1 + initialRayAngle)
+            self.theta1, self.theta2 = Lens1.findTheta1_Theta2(self, thetaR, self.n1, self.n2)
+            #print(f"n2 = {self.n2}   n1 = {self.n1}")
+            print(f"thetaR {thetaR*180/math.pi}   theta1 {self.theta1*180/math.pi}   theta2 {self.theta2*180/math.pi}")
+            #self.theta1 = math.atan((-self.n2 * math.sin(thetaR)) / (self.n1 - self.n2 * math.cos(thetaR)))
+            #self.theta2 = math.asin(self.n1 * math.sin(self.theta1) / self.n2)
+            #print(f"thetaR {thetaR*180/math.pi}   theta1 {self.theta1 * 180 / math.pi}   theta2 {self.theta2 * 180 / math.pi}")
+
+            self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
+            print(f"segmentAntle = {self.segmentAngle[-1]*180/math.pi}")
+            self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
+            #print(f"segmentAntle = {self.segmentAngle[-1] * 180 / math.pi}")
+
             x1, y1 = i.ray[-2][0],  i.ray[-1][1]
             x2, y2 = i.ray[-1][0],  i.ray[-1][1]
             rLine = [x1, y1], [x2, y2]
@@ -201,7 +194,4 @@ class Lens2():
             self.rayData.append([self.rayNumber, m, m2, x1, y1, fp])
             #print(f"raynum, m, m1, x1, y1, fp {[self.rayNumber, round(m, 3), round(m2, 3), round(x1, 3), round(y1, 3), round(fp, 3)]}")
             #print(f"thetaN = {thetaN * 180 / math.pi}   segAngle = {segmentAngle*180/math.pi} corSegAng = {corSegAng*180/math.pi}")
-
-
-
 

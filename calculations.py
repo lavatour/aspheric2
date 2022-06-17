@@ -111,7 +111,10 @@ class LinAlg:
         else:   # Length of list is even. Better or worse.
             median = lst[a + 1]
 
-        return  median
+        minimum = lst[0]
+        maximum = lst[-1]
+
+        return  minimum, median, maximum
 
 
 def approximate(min, max, goal, precision):

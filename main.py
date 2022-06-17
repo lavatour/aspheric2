@@ -9,7 +9,8 @@ from display import Display
 lens1Front = 0
 focalPoint = 720
 lensHeight = 180
-numSegments = 50
+numSegments = 5000
+numSegments = 5
 n1 = 1.0
 n2 = 1.495
 
@@ -30,9 +31,7 @@ lens1.Inner("Middle")
 numberLightRays = len(lens1.lensXY) -1
 #print(numberLightRays)
 
-
 # Light list for light objects
-
 
 """ Create instance of light """
 for rayNumber in range(numberLightRays):
@@ -55,10 +54,10 @@ for lightBeam in light:
 #Find focal point to calculate second lens
 lens2.findfocalPoint(light)
 
-lens2.align1(light)
+#lens2.align1(light)
 
 #lens2.scale(scaleFactor, lens1)
-#lens2.align(light)
+lens2.align(light)
 
 for lightBeam in light:
     lightBeam.rayLensIntersection(lens2)
@@ -90,7 +89,7 @@ for lightBeam in light:
 for lightBeam in light:
     toScreen.draw_Rays(lightBeam.ray)
 
-print(lens1.fp)
+
 
 toScreen.draw_FocalPoint(lens1.fp)
 toScreen.display_to_screen()
