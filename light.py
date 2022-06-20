@@ -3,13 +3,14 @@ import math
 from lenses import Lens1
 from calculations import LinAlg
 
+
 class Light():
     """Light class for light objects"""
     def __init__(self, rayNumber, lens):
         self.rayNumber = rayNumber
-        #print(f"10 rayNumber = {self.rayNumber}")
-        #self.source = [-200, 0]
-        #print(f"source = {self.source}")
+        # print(f"10 rayNumber = {self.rayNumber}")
+        # self.source = [-200, 0]
+        # print(f"source = {self.source}")
         self.ray = []
         self.angle = [0.0]
         self.lensCoords = [lens.lensXY[self.rayNumber], lens.lensXY[self.rayNumber + 1]]
@@ -20,15 +21,15 @@ class Light():
         """First Lest Segment"""
         segmentCenter = (self.lensCoords[0][1] + self.lensCoords[1][1]) / 2
         self.ray.append([-200, segmentCenter])
-        #self.ray.append([-100, segmentCenter])
-        #print(self.ray)
+        # self.ray.append([-100, segmentCenter])
+        # print(self.ray)
 
 
     def rayLensIntersection(self, lens):
         rX1, rY1 = self.ray[-1][0], self.ray[-1][1]
         rX2, rY2 = rX1 + 100 * math.cos(self.angle[-1]), rY1 + 100 * math.sin(self.angle[-1])
         lineR = [[rY1, rY1], [rX2, rY2]]
-        #print(f"31 rayAngle {self.angle[-1]*180/math.pi}, rX1 {rX1}, rY1 {rY1}, rX2 {rX2}, rY2 {rY2} ")
+        # print(f"31 rayAngle {self.angle[-1]*180/math.pi}, rX1 {rX1}, rY1 {rY1}, rX2 {rX2}, rY2 {rY2} ")
 
         for i in range(1, len(lens.lensXY)):
             lX1, lY1 = lens.lensXY[i-1][0], lens.lensXY[i-1][1]
@@ -37,10 +38,10 @@ class Light():
             intersectionPoint = LinAlg.line_intersection(lineR, lineL)
 
             if intersectionPoint[1] >= lY1 and intersectionPoint[1] <= lY2:
-                #print(f"40 ray {self.ray},   point {intersectionPoint},   rayNumber + 1 {self.rayNumber+1},    i = {i}")
                 self.ray.append([intersectionPoint[0], intersectionPoint[1]])
                 self.segmentNumber.append(i-1) # i-1 because list starts at 0 and i starts at 1
-                break
+                print(f"40 ray {self.ray},   point {intersectionPoint},   rayNumber + 1 {self.rayNumber + 1},    i = {i}")
+
 
 
     def refraction(self, lens):

@@ -78,7 +78,7 @@ class Lens1():
             n1, n2 = self.n1, self.n2
             theta1, theta2 = self.findTheta1_Theta2(thetaR, n1, n2)
             self.theta1, self.theta2 = theta1, theta2
-            print(f"theta1 = {theta1}   theta2 {theta2}")
+            #print(f"theta1 = {theta1}   theta2 {theta2}")
 
             self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi/2)
             #print(f"y = {y}   xDist = {xDist}   theta1 = {self.theta1*180/math.pi}   segmentAngle = {self.segmentAngle[-1]*180/math.pi}")
@@ -97,11 +97,13 @@ class Lens1():
 class Lens2():
 
 
-    def __init__(self, n1, n2, position):
+    def __init__(self, n1, n2, focalPoint, scaleFactor):
 
         self.n1 = n1
         self.n2 = n2
-        self.position = position
+        self.fp = focalPoint
+        self.scaleFactor = scaleFactor
+        #self.position = position
         self.segmentAngle = []
         self.lensXY = []
 
@@ -123,13 +125,92 @@ class Lens2():
 
         #print(f"focalPoints = {points[0], points[-1]}")
 
-        min, fp, max = LinAlg.median(points)
-        #print(f"min = {min}   fp = {fp}   max = {max}")
-        return fp
+        #min, self.fp, max = LinAlg.median(points)
+
+        #print(f"min = {min}   fp = {self.fp}   max = {max}")
+
+
+    def scale(self, lens1):
+
+        scaleFactor = self.scaleFactor
+        #print(f"lens1XY = {lens1.lensXY}")
+
+        for xy in lens1.lensXY:
+            x = xy[0]*scaleFactor + lens1.fp * (1 - scaleFactor)
+            y = xy[1]*scaleFactor
+            self.lensXY.append([x, y])
+        #print(f"Lens2xy = {self.lensXY}")
+
+
+    def align(self, light):
+        """Calculate lens segment position and angle to align light
+                1. lENSxy[0][0] scaleFactor
+                2. for i in range (len(rays)):
+                    A. ThetaR = finalAngle - InitialAngle
+                    B. theta1, theta2
+                    C. middleAngle: imaginary ray between real rays.
+                    D. middleRayLine
+                        i. midpointLens1Segment
+                3 for j in range(len(middleRayLine)):
+                    E. calculate segmentAngle
+                3. for i in range (len(segmentAngle)):
+                    A. segmentLine = [[x1, y1], [x2,y2]
+                    B. segLine middleRay intersection
+
+                    d. calculate lensSegment and ray intersection
+                        i. rayLine
+                        ii. segmentLine
+                    """
+        # 1. lENSxy[0][0] scaleFactor
+        self.lensXY.append([self.fp - self.scaleFactor*self.fp, 0])
+        middleRayLine = []
+        # 2. for i in range (len(rays)):
+
+        for i in range(len(light)):
+            # A. ThetaR = finalAngle - InitialAngle
+            initialRayAngle, finalRayAngle = light[i].angle[-1], 0.0
+            thetaR = finalRayAngle - initialRayAngle
+            # B. Calculate theta1, theta2
+            self.theta1, self.theta2 = Lens1.findTheta1_Theta2(self, thetaR, self.n1, self.n2)
+            # C Calculate middle Angle: imaginary ray between real rays.
+            if i < len(light) - 1:
+                middleAngle = ( light[i].angle[-1] + light[i+1].angle[-1] ) / 2
+            else:
+                middleAngle = 2 * light[i].angle[-1] - light[i-1].angle[-1]
+            # D.Calculate middleRayLine
+
+            middleRayLine.append( [[self.fp, 0.0], [self.fp+100*math.cos(middleAngle), 0.0 + 100*math.sin(middleAngle)]] )
+            print(f"middleRay = {middleAngle*180/math.pi}  lightAngle {light[i].angle[1]*180/math.pi}")
+
+            # E. calculate segmentAngle
+            self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
+        #print(f"middleRayLine {middleRayLine}  \n {len(middleRayLine)}")
+
+        numsegs = len(self.segmentAngle)
+
+        for i in range(len(self.segmentAngle)):
+            # A. segmentLine
+            segX = self.lensXY[i][0] + math.cos(self.segmentAngle[i])
+            segY = self.lensXY[i][1] + math.sin(self.segmentAngle[i])
+            segmentLine = [self.lensXY[i], [segX, segY]]
+            # B. segLine middleRay intersection
+            lX, lY = LinAlg.line_intersection(segmentLine, middleRayLine[i])
+            #print(f"segLine = {segmentLine}, \nmiddleLine = {middleRayLine[i]}")
+            #print(f"lx, ly = {lX, lY}")
+            #****print(light[i].ray[-1])
+            self.lensXY.append([lX, lY])
+            #print(light[i].ray[-1])
+            #print()
+
+
+
 
 
     def align1(self, light):
-
+        """
+        :param light:
+        :return:
+        """
         angles = []
         degrees = []
 
@@ -145,38 +226,38 @@ class Lens2():
         #print(f"69 degrees = {degrees}")
 
 
-    def scale(self, scaleFactor, lens1):
-
-        self.scaleFactor = scaleFactor
-        #print(f"lens1XY = {lens1.lensXY}")
-
-        for xy in lens1.lensXY:
-            x = xy[0]*scaleFactor + lens1.fp * (1 - scaleFactor)
-            y = xy[1]*scaleFactor
-            self.lensXY.append([x, y])
-        #print(f"Lens2xy = {self.lensXY}")
 
 
-    def align(self, light):
 
-        """Calculate lens segment position and angle to align light"""
+
+    def align1(self, light):
+
+        """Calculate lens segment position and angle to align light
+        1. lENSxy[0][0] from scale
+        2. for i in range (len(rays)):
+            A. ThetaR = finalAngle - InitialAngle
+            B. Calculate theta1, theta2
+            C. calculate segmentAngle
+            """
+        #self.scaleFactor()
         self.rayData = []
 
         for i in light:
+            print(f"ray = {i.ray}")
             self.rayNumber = i.rayNumber
             initialRayAngle = i.angle[-1]
             finalRayAngle = 0.0
             thetaR = finalRayAngle - initialRayAngle
             self.theta1, self.theta2 = Lens1.findTheta1_Theta2(self, thetaR, self.n1, self.n2)
             #print(f"n2 = {self.n2}   n1 = {self.n1}")
-            print(f"thetaR {thetaR*180/math.pi}   theta1 {self.theta1*180/math.pi}   theta2 {self.theta2*180/math.pi}")
+            #print(f"thetaR {thetaR*180/math.pi}   theta1 {self.theta1*180/math.pi}   theta2 {self.theta2*180/math.pi}")
             #self.theta1 = math.atan((-self.n2 * math.sin(thetaR)) / (self.n1 - self.n2 * math.cos(thetaR)))
             #self.theta2 = math.asin(self.n1 * math.sin(self.theta1) / self.n2)
             #print(f"thetaR {thetaR*180/math.pi}   theta1 {self.theta1 * 180 / math.pi}   theta2 {self.theta2 * 180 / math.pi}")
 
             self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
-            print(f"segmentAntle = {self.segmentAngle[-1]*180/math.pi}")
-            self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
+            #print(f"segmentAntle = {self.segmentAngle[-1]*180/math.pi}")
+            #self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
             #print(f"segmentAntle = {self.segmentAngle[-1] * 180 / math.pi}")
 
             x1, y1 = i.ray[-2][0],  i.ray[-1][1]
