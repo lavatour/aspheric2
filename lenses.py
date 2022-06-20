@@ -108,27 +108,15 @@ class Lens2():
         self.lensXY = []
 
 
-    def findfocalPoint(self, light):
-
-        points = []
-
-        for lightBeam in light:
-            #print(lightBeam.ray)
-            ry = lightBeam.ray
-            focalLine = [0,0], [100, 0]
-            #print(f"ry = {ry}")
-            #print(ry[-2][0])
-            rayLine = [ry[-2][0], ry[-2][1]], [ry[-1][0], ry[-1][1]]
-            fX, fY = LinAlg.line_intersection(rayLine, focalLine)
-            #print((f"x,y = {fX, fY}"))
-            points.append(fX)
-
-        #print(f"focalPoints = {points[0], points[-1]}")
-
-        #min, self.fp, max = LinAlg.median(points)
-
-        #print(f"min = {min}   fp = {self.fp}   max = {max}")
-
+    def findRayMidline(self, light):
+        """
+        I. Find midline between adjacent rays
+            A. ray[i] and ray[i+1] intersection: midRX1, midY1
+            B. midRay Angle, average angles ray[i] & ray[i+1]
+            C. midRay point 2, midRX2 = midRX1 + cos(midRAngle)...
+            D. define midRayLine"""
+        for i in range(len(light) - 1):
+            print(light[i].ray[-1])
 
     def scale(self, lens1):
 
@@ -180,7 +168,7 @@ class Lens2():
             # D.Calculate middleRayLine
 
             middleRayLine.append( [[self.fp, 0.0], [self.fp+100*math.cos(middleAngle), 0.0 + 100*math.sin(middleAngle)]] )
-            print(f"middleRay = {middleAngle*180/math.pi}  lightAngle {light[i].angle[1]*180/math.pi}")
+            #print(f"middleRay = {middleAngle*180/math.pi}  lightAngle {light[i].angle[1]*180/math.pi}")
 
             # E. calculate segmentAngle
             self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
@@ -201,78 +189,4 @@ class Lens2():
             self.lensXY.append([lX, lY])
             #print(light[i].ray[-1])
             #print()
-
-
-
-
-
-    def align1(self, light):
-        """
-        :param light:
-        :return:
-        """
-        angles = []
-        degrees = []
-
-        for lightbeam in light:
-            angles.append(lightbeam.angle[-1])
-            degrees.append(lightbeam.angle[-1]*180/math.pi)
-        angles.sort()
-        degrees.sort()
-        minAngle = angles[0] - 0.01
-        maxAngle = angles[-1] + 0.01
-
-        #print(f"68 angles = {angles}")
-        #print(f"69 degrees = {degrees}")
-
-
-
-
-
-
-    def align1(self, light):
-
-        """Calculate lens segment position and angle to align light
-        1. lENSxy[0][0] from scale
-        2. for i in range (len(rays)):
-            A. ThetaR = finalAngle - InitialAngle
-            B. Calculate theta1, theta2
-            C. calculate segmentAngle
-            """
-        #self.scaleFactor()
-        self.rayData = []
-
-        for i in light:
-            print(f"ray = {i.ray}")
-            self.rayNumber = i.rayNumber
-            initialRayAngle = i.angle[-1]
-            finalRayAngle = 0.0
-            thetaR = finalRayAngle - initialRayAngle
-            self.theta1, self.theta2 = Lens1.findTheta1_Theta2(self, thetaR, self.n1, self.n2)
-            #print(f"n2 = {self.n2}   n1 = {self.n1}")
-            #print(f"thetaR {thetaR*180/math.pi}   theta1 {self.theta1*180/math.pi}   theta2 {self.theta2*180/math.pi}")
-            #self.theta1 = math.atan((-self.n2 * math.sin(thetaR)) / (self.n1 - self.n2 * math.cos(thetaR)))
-            #self.theta2 = math.asin(self.n1 * math.sin(self.theta1) / self.n2)
-            #print(f"thetaR {thetaR*180/math.pi}   theta1 {self.theta1 * 180 / math.pi}   theta2 {self.theta2 * 180 / math.pi}")
-
-            self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
-            #print(f"segmentAntle = {self.segmentAngle[-1]*180/math.pi}")
-            #self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
-            #print(f"segmentAntle = {self.segmentAngle[-1] * 180 / math.pi}")
-
-            x1, y1 = i.ray[-2][0],  i.ray[-1][1]
-            x2, y2 = i.ray[-1][0],  i.ray[-1][1]
-            rLine = [x1, y1], [x2, y2]
-            #print(f"initialRayAngle {initialRayAngle*180/math.pi}   finalRayAngle = {finalRayAngle*180/math.pi}     thetaR = {thetaR*180/math.pi}    n1 = {self.n1}     n2 = {self.n2}")
-            #print(f"theta1 = {self.theta1*180/math.pi}    theta2 = {self.theta2*180/math.pi}    segmentAngle = {self.segmentAngle[-1]*180/math.pi}")
-
-            m = math.tan(i.angle[-1])
-            m2 = (i.ray[-2][1] - i.ray[-1][1]) / (i.ray[-2][0] - i.ray[-1][0])
-            x1 = i.ray[-2][0]
-            y1 = i.ray[-2][1]
-            fp = (m*x1 - y1) / m
-            thetaRay = i.angle[-1]
-            self.rayData.append([self.rayNumber, m, m2, x1, y1, fp])
-            #print(f"raynum, m, m1, x1, y1, fp {[self.rayNumber, round(m, 3), round(m2, 3), round(x1, 3), round(y1, 3), round(fp, 3)]}")
-            #print(f"thetaN = {thetaN * 180 / math.pi}   segAngle = {segmentAngle*180/math.pi} corSegAng = {corSegAng*180/math.pi}")
 

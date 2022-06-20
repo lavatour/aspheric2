@@ -40,7 +40,7 @@ class Light():
             if intersectionPoint[1] >= lY1 and intersectionPoint[1] <= lY2:
                 self.ray.append([intersectionPoint[0], intersectionPoint[1]])
                 self.segmentNumber.append(i-1) # i-1 because list starts at 0 and i starts at 1
-                print(f"40 ray {self.ray},   point {intersectionPoint},   rayNumber + 1 {self.rayNumber + 1},    i = {i}")
+                #print(f"40 ray {self.ray},   point {intersectionPoint},   rayNumber + 1 {self.rayNumber + 1},    i = {i}")
 
 
 

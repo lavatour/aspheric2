@@ -52,7 +52,7 @@ for lightBeam in light:
     #print(f"52{lightBeam.ray[-1]}")
 
 #Find focal point to calculate second lens
-lens2.findfocalPoint(light)
+lens2.findRayMidline(light)
 
 
 #lens2.align1(light)
