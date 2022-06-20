@@ -48,8 +48,9 @@ for lightBeam in light:
     lightBeam.refraction(lens1)
 
 for lightBeam in light:
-    lightBeam.rayExtension(1)
+    lightBeam.rayExtension(100)
     #print(f"52{lightBeam.ray[-1]}")
+    pass
 
 #Find focal point to calculate second lens
 lens2.findRayMidline(light)
@@ -61,7 +62,7 @@ lens2.findRayMidline(light)
 lens2.align(light)
 
 for lightBeam in light:
-    lightBeam.rayLensIntersection(lens2)
+    #****lightBeam.rayLensIntersection(lens2)
     #print(f"65{lightBeam.ray[-1]}")
     #lightBeam.rayLensIntersection(lens2)
     pass
@@ -76,7 +77,7 @@ for lightBeam in light:
 #print(f"light: {light[0].ray}")
 
 for lightBeam in light:
-    lightBeam.rayExtension(700)
+    #lightBeam.rayExtension(100)
     pass
 
 

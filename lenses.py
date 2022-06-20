@@ -116,7 +116,16 @@ class Lens2():
             C. midRay point 2, midRX2 = midRX1 + cos(midRAngle)...
             D. define midRayLine"""
         for i in range(len(light) - 1):
-            print(light[i].ray[-1])
+            # A.ray[i] and ray[i + 1] intersection: midRX1, midY1
+            rayLine1 = [light[i].ray[-1], light[i].ray[-2]]
+            rayLine2 = [light[i+1].ray[-1], light[i+1].ray[-2]]
+            midRX1, midRX2 = LinAlg.line_intersection(rayLine1, rayLine2)
+            # B. midRay Angle, average angles ray[i] & ray[i+1]
+            midRayAngle = (light[i].angle[-1] + light[i+1].angle[-1]) / 2
+            print(midRayAngle*180/math.pi)
+            print(midRX1, midRX2)
+            print(light[i].ray[-1], light[i].ray[-2])
+            print()
 
     def scale(self, lens1):
 
