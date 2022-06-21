@@ -106,37 +106,43 @@ class Lens2():
         #self.position = position
         self.segmentAngle = []
         self.lensXY = []
+        self.midRayLine = []
 
 
     def findRayMidline(self, light):
         """
         I. Find midline between adjacent rays
-            A. ray[i] and ray[i+1] intersection: midRX1, midY1
-            B. midRay Angle, average angles ray[i] & ray[i+1]
+            A. midRay Angle, average angles ray[i] & ray[i+1]
+            TO DO B. ray[i] and ray[i+1] intersection: midRX1, midY1
             C. midRay point 2, midRX2 = midRX1 + cos(midRAngle)...
-            D. define midRayLine"""
-        for i in range(len(light) - 1):
-            # A.ray[i] and ray[i + 1] intersection: midRX1, midY1
-            rayLine1 = [light[i].ray[-1], light[i].ray[-2]]
-            rayLine2 = [light[i+1].ray[-1], light[i+1].ray[-2]]
-            midRX1, midRX2 = LinAlg.line_intersection(rayLine1, rayLine2)
-            # B. midRay Angle, average angles ray[i] & ray[i+1]
-            midRayAngle = (light[i].angle[-1] + light[i+1].angle[-1]) / 2
-            print(midRayAngle*180/math.pi)
-            print(midRX1, midRX2)
-            print(light[i].ray[-1], light[i].ray[-2])
-            print()
+            D. numRays - 1 midRayLine
+            E. last midRayLine add angle"""
 
-    def scale(self, lens1):
+        midRayAngle = []
+        for i in range(len(light)):
+            # A. midRay Angle, average angles ray[i] & ray[i+1]
+            if i <= len(light)-2:
+                midRayAngle.append((light[i].angle[-1] + light[i+1].angle[-1]) / 2)
+            if i == len(light)-2:
+                deltaAngle = midRayAngle[i] - midRayAngle[i-1]
+                midRayAngle.append(midRayAngle[i] + deltaAngle)
 
-        scaleFactor = self.scaleFactor
-        #print(f"lens1XY = {lens1.lensXY}")
-
-        for xy in lens1.lensXY:
-            x = xy[0]*scaleFactor + lens1.fp * (1 - scaleFactor)
-            y = xy[1]*scaleFactor
-            self.lensXY.append([x, y])
-        #print(f"Lens2xy = {self.lensXY}")
+            # B. ray[i] and ray[i + 1] intersection: midRX1, midY1
+            if i <= len(light) - 2:
+                rayLine1 = [light[i].ray[-1], light[i].ray[-2]]
+                rayLine2 = [light[i + 1].ray[-1], light[i + 1].ray[-2]]
+                midRX1, midRY1 = LinAlg.line_intersection(rayLine1, rayLine2)
+            if i == len(light) - 2:
+                #print("xxx")
+                midRX1, midRX1 = midRX1, midRX1
+            #print(f"midRX1, midRY1 = {midRX1, midRY1}   i {i}")
+            # C. midRay point midRX2 = midRX1 + cos(midRAngle)...
+            midRX2 = midRX1 - 800 * math.cos(midRayAngle[i])
+            midRY2 = midRY1 - 800 * math.sin(midRayAngle[i])
+            # D. define midRayLine
+            self.midRayLine.append([[midRX1, midRY1], [midRX2, midRY2]])
+        #print(f"midRayAngle {midRayAngle}")
+        #print(f"midRayLine {self.midRayLine}")
 
 
     def align(self, light):
@@ -160,7 +166,7 @@ class Lens2():
                     """
         # 1. lENSxy[0][0] scaleFactor
         self.lensXY.append([self.fp - self.scaleFactor*self.fp, 0])
-        middleRayLine = []
+        #print(f"lensXY {self.lensXY}")
         # 2. for i in range (len(rays)):
 
         for i in range(len(light)):
@@ -176,7 +182,7 @@ class Lens2():
                 middleAngle = 2 * light[i].angle[-1] - light[i-1].angle[-1]
             # D.Calculate middleRayLine
 
-            middleRayLine.append( [[self.fp, 0.0], [self.fp+100*math.cos(middleAngle), 0.0 + 100*math.sin(middleAngle)]] )
+            #middleRayLine.append( [[self.fp, 0.0], [self.fp+100*math.cos(middleAngle), 0.0 + 100*math.sin(middleAngle)]] )
             #print(f"middleRay = {middleAngle*180/math.pi}  lightAngle {light[i].angle[1]*180/math.pi}")
 
             # E. calculate segmentAngle
@@ -187,15 +193,16 @@ class Lens2():
 
         for i in range(len(self.segmentAngle)):
             # A. segmentLine
-            segX = self.lensXY[i][0] + math.cos(self.segmentAngle[i])
-            segY = self.lensXY[i][1] + math.sin(self.segmentAngle[i])
-            segmentLine = [self.lensXY[i], [segX, segY]]
+            #segX = self.lensXY[i][0] + math.cos(self.segmentAngle[i])
+            #segY = self.lensXY[i][1] + math.sin(self.segmentAngle[i])
+            #segmentLine = [self.lensXY[i], [segX, segY]]
             # B. segLine middleRay intersection
-            lX, lY = LinAlg.line_intersection(segmentLine, middleRayLine[i])
+            #lX, lY = LinAlg.line_intersection(segmentLine, self.midRayLine[i])
             #print(f"segLine = {segmentLine}, \nmiddleLine = {middleRayLine[i]}")
             #print(f"lx, ly = {lX, lY}")
             #****print(light[i].ray[-1])
-            self.lensXY.append([lX, lY])
+            #self.lensXY.append([lX, lY])
             #print(light[i].ray[-1])
             #print()
+            pass
 

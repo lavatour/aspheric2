@@ -9,7 +9,7 @@ from display import Display
 lens1Front = 0
 focalPoint = 720
 lensHeight = 180
-numSegments = 10
+numSegments = 5
 n1 = 1.0
 n2 = 1.495
 
@@ -55,10 +55,6 @@ for lightBeam in light:
 #Find focal point to calculate second lens
 lens2.findRayMidline(light)
 
-
-#lens2.align1(light)
-
-#lens2.scale(scaleFactor, lens1)
 lens2.align(light)
 
 for lightBeam in light:
@@ -95,6 +91,11 @@ for lightBeam in light:
 
 for lightBeam in light:
     toScreen.draw_Rays(lightBeam.ray)
+
+
+for line in lens2.midRayLine:
+    toScreen.draw_Rays(line)
+    print(line)
 
 
 
