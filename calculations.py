@@ -116,6 +116,19 @@ class LinAlg:
 
         return  minimum, median, maximum
 
+    def rotationMatrix2x2(self, theta, unit="rad"):
+        #print(theta)
+        if unit == "deg" or unit == "degree":
+            theta = theta * math.pi / 180
+            unit = "rad"
+        if unit == "radian":
+            unit = "rad"
+        if unit != "rad":
+            "Rotation Matrix method: unit not correctly defined."
+            return
+        R = np.array([[math.cos(theta), -math.sin(theta)], [math.sin(theta), math.cos(theta)]])
+        return R
+
 
 def approximate(min, max, goal, precision):
     def increment(min, max, goal):

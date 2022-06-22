@@ -9,7 +9,7 @@ from display import Display
 lens1Front = 0
 focalPoint = 720
 lensHeight = 180
-numSegments = 5
+numSegments = 50
 n1 = 1.0
 n2 = 1.495
 
@@ -19,7 +19,7 @@ lens1 = Lens1(focalPoint, lensHeight, numSegments, n1, n2)
 
 n1 = 1.5
 n2 = 1.0
-scaleFactor = 0.2
+scaleFactor = 0.1
 lens2 = Lens2(n1, n2, focalPoint, scaleFactor)
 
 
