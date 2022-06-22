@@ -25,24 +25,45 @@ class Light():
         # print(self.ray)
 
 
-    def rayLensIntersection(self, lens):
+    def rayLens1Intersection(self, lens):
         rX1, rY1 = self.ray[-1][0], self.ray[-1][1]
         rX2, rY2 = rX1 + 100 * math.cos(self.angle[-1]), rY1 + 100 * math.sin(self.angle[-1])
         lineR = [[rY1, rY1], [rX2, rY2]]
-        # print(f"31 rayAngle {self.angle[-1]*180/math.pi}, rX1 {rX1}, rY1 {rY1}, rX2 {rX2}, rY2 {rY2} ")
-
         for i in range(1, len(lens.lensXY)):
             lX1, lY1 = lens.lensXY[i-1][0], lens.lensXY[i-1][1]
             lX2, lY2 = lens.lensXY[i][0], lens.lensXY[i][1]
             lineL = [[lX1, lY1],[lX2, lY2]]
             intersectionPoint = LinAlg.line_intersection(lineR, lineL)
-
             if intersectionPoint[1] >= lY1 and intersectionPoint[1] <= lY2:
                 self.ray.append([intersectionPoint[0], intersectionPoint[1]])
                 self.segmentNumber.append(i-1) # i-1 because list starts at 0 and i starts at 1
-                #print(f"40 ray {self.ray},   point {intersectionPoint},   rayNumber + 1 {self.rayNumber + 1},    i = {i}")
 
 
+    def rayLens2Intersection(self, lens):
+        """Intersection point of light and lens2
+            1. lineRay: [ray[-2], ray[-1]]
+            2. Loop through lens segments
+                A. lineLens lens
+                B. intersection rayLine lensLine
+                C. check point is in lens segment
+                D. if yes append point to ray"""
+        # 1. lineRay: [ray[-2], ray[-1]]
+        lineRay = [self.ray[-2], self.ray[-1]]
+        for i in range(1, len(lens.lensXY)):
+            # A. lineLens lens
+            if i < len(lens.lensXY):
+                lineLens = [lens.lensXY[i-1], lens.lensXY[i]]
+            # B. intersection rayLine lensLine
+            x, y = LinAlg.line_intersection(lineRay, lineLens)
+            # C. check point is in lens segment
+            if y > lens.lensXY[i-1][1] and y < lens.lensXY[i][1]:
+                self.ray.append([x, y])
+
+
+            pass
+
+                
+        pass
 
     def refraction(self, lens):
         """rayNumber + 1 = lens Segment number."""

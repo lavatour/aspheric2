@@ -42,31 +42,32 @@ for lightBeam in light:
     lightBeam.lightSource()
 
 for lightBeam in light:
-    lightBeam.rayLensIntersection(lens1)
+    lightBeam.rayLens1Intersection(lens1)
 
 for lightBeam in light:
     lightBeam.refraction(lens1)
 
+print()
 for lightBeam in light:
-    lightBeam.rayExtension(100)
-    #print(f"52{lightBeam.ray[-1]}")
-    pass
+    lightBeam.rayExtension(5)
+    #print(f"M52 lightBeam.angle {lightBeam.angle}")
+
+print()
 
 #Find focal point to calculate second lens
 lens2.findRayMidline(light)
 
-lens2.align(light)
+lens2.formLens(light)
 
 for lightBeam in light:
-    #****lightBeam.rayLensIntersection(lens2)
-    #print(f"65{lightBeam.ray[-1]}")
-    #lightBeam.rayLensIntersection(lens2)
+    lightBeam.rayLens2Intersection(lens2)
     pass
 
 
 
 for lightBeam in light:
-    #lightBeam.refraction(lens2)
+    lightBeam.refraction(lens2)
+    #print(f"M73 lightBeam.angle {lightBeam.angle}")
     pass
 
 #print(f"type(light): {type(light)}")
@@ -94,8 +95,9 @@ for lightBeam in light:
 
 
 for line in lens2.midRayLine:
-    toScreen.draw_Rays(line)
-    print(line)
+    #toScreen.draw_Rays(line)
+    #print(line)
+    pass
 
 
 

@@ -145,14 +145,13 @@ class Lens2():
         #print(f"midRayLine {self.midRayLine}")
 
 
-    def align(self, light):
+    def formLens(self, light):
         """Calculate lens segment position and angle to align light
                 1. lENSxy[0][0] scaleFactor
                 2. for i in range (len(rays)):
                     A. ThetaR = finalAngle - InitialAngle
                     B. theta1, theta2
-                    C. middleAngle: imaginary ray between real rays.
-                    D. middleRayLine
+                    C. Segment angle
                         i. midpointLens1Segment
                 3 for j in range(len(middleRayLine)):
                     E. calculate segmentAngle
@@ -175,34 +174,26 @@ class Lens2():
             thetaR = finalRayAngle - initialRayAngle
             # B. Calculate theta1, theta2
             self.theta1, self.theta2 = Lens1.findTheta1_Theta2(self, thetaR, self.n1, self.n2)
-            # C Calculate middle Angle: imaginary ray between real rays.
-            if i < len(light) - 1:
-                middleAngle = ( light[i].angle[-1] + light[i+1].angle[-1] ) / 2
-            else:
-                middleAngle = 2 * light[i].angle[-1] - light[i-1].angle[-1]
-            # D.Calculate middleRayLine
+            #print(f"middleRay = {self.midRayLine[i]}  lightAngle {light[i].angle[1]*180/math.pi}")
 
-            #middleRayLine.append( [[self.fp, 0.0], [self.fp+100*math.cos(middleAngle), 0.0 + 100*math.sin(middleAngle)]] )
-            #print(f"middleRay = {middleAngle*180/math.pi}  lightAngle {light[i].angle[1]*180/math.pi}")
-
-            # E. calculate segmentAngle
+            # C. calculate segmentAngle
             self.segmentAngle.append(initialRayAngle - self.theta1 + math.pi / 2)
-        #print(f"middleRayLine {middleRayLine}  \n {len(middleRayLine)}")
+            #print(f"segmentAngle {self.segmentAngle}")
+
 
         numsegs = len(self.segmentAngle)
 
         for i in range(len(self.segmentAngle)):
             # A. segmentLine
-            #segX = self.lensXY[i][0] + math.cos(self.segmentAngle[i])
-            #segY = self.lensXY[i][1] + math.sin(self.segmentAngle[i])
-            #segmentLine = [self.lensXY[i], [segX, segY]]
+            segX = self.lensXY[i][0] + math.cos(self.segmentAngle[i])
+            segY = self.lensXY[i][1] + math.sin(self.segmentAngle[i])
+            segmentLine = [self.lensXY[i], [segX, segY]]
+            #print(f"segLine = {segmentLine}")
             # B. segLine middleRay intersection
-            #lX, lY = LinAlg.line_intersection(segmentLine, self.midRayLine[i])
-            #print(f"segLine = {segmentLine}, \nmiddleLine = {middleRayLine[i]}")
-            #print(f"lx, ly = {lX, lY}")
-            #****print(light[i].ray[-1])
-            #self.lensXY.append([lX, lY])
+            lX, lY = LinAlg.line_intersection(segmentLine, self.midRayLine[i])
+            self.lensXY.append([lX, lY])
+            #print(f"lensXY = {self.lensXY}")
             #print(light[i].ray[-1])
-            #print()
-            pass
+
+
 
