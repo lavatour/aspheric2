@@ -5,11 +5,11 @@ from lenses import Lens2
 from light import Light
 from display import Display
 
-#numberLightRays = 100
+#numberLightRays = 00
 lens1Front = 0
-focalPoint = 720
-lensHeight = 180
-numSegments = 50
+focalPoint = 900
+lensHeight = 200
+numSegments = 5
 n1 = 1.0
 n2 = 1.495
 
@@ -82,16 +82,18 @@ for lightBeam in light:
 toScreen = Display()
 
 #drawLens
-toScreen.draw_Lens1(lens1.lensXY, "RED")
-#toScreen.draw_Lens1(lens1.lensXYMid, "BLUE")
-#toScreen.draw_Lens1(lens1.lensXYOuter, "BLACK")
-toScreen.draw_Lens1(lens2.lensXY, "RED")
+#toScreen.draw_Lens(lens1.lensXY, "RED")
+toScreen.drawLensLines(lens1.lensXY)
+
+#toScreen.draw_Lens(lens2.lensXY, "RED")
+toScreen.drawLensLines(lens2.lensXY)
 
 for lightBeam in light:
     toScreen.draw_Source(lightBeam.ray)
 
 for lightBeam in light:
     toScreen.draw_Rays(lightBeam.ray)
+    pass
 
 
 for line in lens2.midRayLine:
@@ -103,4 +105,5 @@ for line in lens2.midRayLine:
 
 toScreen.draw_FocalPoint(lens1.fp)
 toScreen.display_to_screen()
+
 

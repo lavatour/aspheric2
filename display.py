@@ -23,7 +23,7 @@ class Display():
         pygame.display.set_caption("Lens")
         self.display.fill(self.WHITE)
 
-    def draw_Lens1(self, surface, color):
+    def draw_Lens(self, surface, color):
         for point in surface:
             x = point[0]
             y = point[1]
@@ -33,6 +33,18 @@ class Display():
                 pygame.draw.circle(self.display, self.BLUE, (x + self.OFFSET_X, -y + self.OFFSET_Y), 3, 3)
             else:
                 pygame.draw.circle(self.display, self.BLACK, (x + self.OFFSET_X, -y + self.OFFSET_Y), 1, 1)
+
+
+    def drawLensLines(self, lens):
+        """display rays"""
+        for p in range(len(lens)-1):
+            #print(f"ray = {ray}")
+            x1, y1 = lens[p][0], -lens[p][1]
+            x2, y2 = lens[p+1][0], -lens[p+1][1]
+
+
+            pygame.draw.line(self.display, self.BLUE, [x1 + self.OFFSET_X, y1 + self.OFFSET_Y], [x2 + self.OFFSET_X, y2 + self.OFFSET_Y])
+            #print(x1 + self.OFFSET_X, y1 + self.OFFSET_Y)
 
 
     def draw_Source(self, ray):
@@ -67,5 +79,10 @@ class Display():
             for event in pygame.event.get():  # this gets any event on the screen
                 if event.type == pygame.QUIT:
                     running = False
+
+                pygame.image.save(self.display, "image.jpg")
+                pygame.image.save(self.display, "image.png")
+
         pygame.quit()
         quit()
+
