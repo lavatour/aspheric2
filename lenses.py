@@ -196,4 +196,33 @@ class Lens2():
             #print(light[i].ray[-1])
 
 
+class completeLens():
+    def __init__(self):
+        pass
 
+    def lowerHalf(self, lensPts):
+        copyLlens = []
+        for pt in lensPts:
+            copyLlens.append(pt)
+        for i in range(1, len(lensPts)):
+            # print(f"lensPts = {lensPts[i][0], -1*lensPts[i][1]}")
+            copyLlens.insert(0, [lensPts[i][0], -1 * lensPts[i][1]])
+        #print(copyLlens)
+        return copyLlens
+
+
+    def lensCorners(self, lens1XY, lens2XY):
+        uX, uY = [lens2XY[-1][0] ,lens1XY[-1][1]]
+        bX, bY = [lens2XY[0][0], lens1XY[0][1]]
+        topLine = [[lens1XY[-1][0], lens1XY[-1][1]],[uX, uY]]
+        topBack = [[uX, uY], [lens2XY[0][0], lens2XY[-1][1]]]
+        lowBack = [[lens2XY[0][0], lens2XY[0][1]], [bX, bY]]
+        lowLine = [[bX, bY], [lens1XY[0][0], lens1XY[0][1]]]
+        return [topLine, topBack, lowBack, lowLine]
+
+
+#toScreen.copyAndDisplay(lens2)
+"""Make a new function/method that creates two new lists for the points in lens1 and lens2
+They will have copies of all the values except at y == 0.
+This method will be called copyAndDisplay
+"""

@@ -17,13 +17,15 @@ class Light():
         self.lensCoords = [lens.lensXY[self.rayNumber], lens.lensXY[self.rayNumber + 1]]
         self.segmentNumber = []
 
+
     """ LIGHT SOURCES """
     def lightSource(self):
         """First Lest Segment"""
         segmentCenter = (self.lensCoords[0][1] + self.lensCoords[1][1]) / 2
         self.ray.append([-200, segmentCenter])
+
         # self.ray.append([-100, segmentCenter])
-        # print(self.ray)
+        #print(self.ray)
 
 
     def rayLens1Intersection(self, lens):
@@ -88,9 +90,9 @@ class Light():
                 # 1. if yes append point to ray"""
                 self.ray.append([x, y])
                 self.angle.append(self.refractionlens2(lineLens, lineRay, lens.n1, lens.n2))
-                print(f"angle = {self.angle}")
+                #print(f"angle = {self.angle}")
                 self.rayExtension(100)
-                print(self.ray)
+                #print(self.ray)
 
     def refractionlens2(self, lXY, rXY, n1, n2):
         """Refraction Lens 2
@@ -117,7 +119,7 @@ class Light():
         theta2 = math.asin(n1 * math.sin(theta1) / n2)
         #print(f"theta2 = {theta2*180/math.pi}")
         rayAngle = normalAngle + theta2
-        print("rayangle", rayAngle)
+        #print("rayangle", rayAngle)
         return rayAngle
 
 
