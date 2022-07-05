@@ -10,7 +10,7 @@ from display import Display
 lens1Front = 0
 focalPoint = 900
 lensHeight = 200
-numSegments = 50
+numSegments = 500
 n1 = 1.0
 n2 = 1.495
 
@@ -26,7 +26,7 @@ lens2 = Lens2(n1, n2, focalPoint, scaleFactor)
 
 lens1.Inner("Middle")
 lens1XY = finishLens.lowerHalf(lens1.lensXY)
-print(lens1XY)
+#print(lens1XY)
 
 
 
@@ -64,11 +64,11 @@ lens2.findRayMidline(light)
 lens2.formLens(light)
 
 lens2XY = finishLens.lowerHalf(lens2.lensXY)
-print(lens2XY)
+#print(lens2XY)
 
 corners = []
 corners = finishLens.lensCorners(lens1XY, lens2XY)
-print(f"corners {corners}")
+#print(f"corners {corners}")
 
 
 
@@ -108,7 +108,7 @@ for lightBeam in light:
     pass
 
 for lightBeam in light:
-    toScreen.draw_Rays(lightBeam.ray)
+    #toScreen.draw_Rays(lightBeam.ray)
     pass
 
 
