@@ -5,14 +5,19 @@ from lenses import Lens2
 from lenses import completeLens
 from light import Light
 from display import Display
+from makeSVG import saveSVG
+
 
 #numberLightRays = 00
 lens1Front = 0
-focalPoint = 900
-lensHeight = 200
-numSegments = 500
+focalPoint = 250
+lensHeight = 100
+numSegments = 10
 n1 = 1.0
 n2 = 1.495
+
+filename = "height" + str(lensHeight) + "fp" + str(focalPoint)
+print(f"filename = {filename}")
 
 light = []
 lens1 = Lens1(focalPoint, lensHeight, numSegments, n1, n2)
@@ -23,8 +28,9 @@ n2 = 1.0
 scaleFactor = 0.1
 lens2 = Lens2(n1, n2, focalPoint, scaleFactor)
 
-
-lens1.Inner("Middle")
+# Calculate coordinates for front lens
+lens1.Inner()
+# Add negative of coordinates to make complete front lens.
 lens1XY = finishLens.lowerHalf(lens1.lensXY)
 #print(lens1XY)
 
@@ -40,7 +46,6 @@ numberLightRays = len(lens1.lensXY) -1
 for rayNumber in range(numberLightRays):
     light.append(Light(rayNumber, lens1))
 
-
 """ ADD LIGHT SOURCE POINTS """
 for lightBeam in light:
     lightBeam.lightSource()
@@ -51,12 +56,12 @@ for lightBeam in light:
 for lightBeam in light:
     lightBeam.refraction(lens1)
 
-print()
+#print()
 for lightBeam in light:
     lightBeam.rayExtension(5)
     #print(f"M52 lightBeam.angle {lightBeam.angle}")
 
-print()
+#print()
 
 #Find focal point to calculate second lens
 lens2.findRayMidline(light)
@@ -68,7 +73,43 @@ lens2XY = finishLens.lowerHalf(lens2.lensXY)
 
 corners = []
 corners = finishLens.lensCorners(lens1XY, lens2XY)
+topCorner, bottomCorner = finishLens.svgCorners(lens1XY, lens2XY)
 #print(f"corners {corners}")
+
+
+svgPoints = lens1XY
+print(f"svgPoints {svgPoints}")
+svgPoints.append(topCorner)
+lens2XY.reverse()
+
+for i in lens2XY:
+    svgPoints.append(i)
+
+svgPoints.append(bottomCorner)
+svgPoints.append(lens1XY[0])
+
+lens2XY.reverse()
+
+minX, minY, maxX, maxY = svgPoints[0][0], svgPoints[0][1], svgPoints[0][0], svgPoints[0][1]
+for i in svgPoints:
+    if i[0] < minX:
+        minX = i[0]
+    if i[1] < minY:
+        minX = i[1]
+    if i[0] > maxX:
+        maxX = i[0]
+    if i[1] > maxY:
+        maxY = i[1]
+
+viewWidth = (maxX - minX)*1.1
+viewHeight = (maxY - minY)*1.1
+origX = minX - 0.05*viewWidth
+origY = minY - 0.05*viewHeight
+
+points = [[0,-90], [90,-30], [75,90], [-75,90], [-60,-30], [0,-90]]
+laserImage = saveSVG(viewWidth, viewHeight, origX, origY, viewWidth, viewHeight, svgPoints)
+print(f"filename {filename}")
+laserImage.writeSVG(filename)
 
 
 
@@ -97,25 +138,18 @@ toScreen = Display()
 
 
 #drawLens
-#toScreen.draw_Lens(lens1.lensXY, "RED")
-toScreen.drawLensLines(lens1.lensXY)
+#toScreen.draw_Lens(lens1.lensXY, "RED") #***
+#toScreen.drawLensLines(lens1.lensXY)
 
-#toScreen.draw_Lens(lens2.lensXY, "RED")
-toScreen.drawLensLines(lens2.lensXY)
+#toScreen.draw_Lens(lens2.lensXY, "RED") #***
+#toScreen.drawLensLines(lens2.lensXY)
 
 for lightBeam in light:
     #toScreen.draw_Source(lightBeam.ray)
     pass
 
-for lightBeam in light:
-    #toScreen.draw_Rays(lightBeam.ray)
-    pass
 
 
-for line in lens2.midRayLine:
-    #toScreen.draw_Rays(line)
-    #print(line)
-    pass
 
 # ************** COPY
 toScreen.drawLensLines(lens1XY)

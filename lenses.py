@@ -40,8 +40,9 @@ class Lens1():
         return theta1, theta2
 
 
-    def Inner(self, position):
-        """Calculate lens segment position and angle to focus to point fp
+    def Inner(self):
+        """Inner refers to lens closest to light source. *** I think***
+        Calculate lens segment position and angle to focus to point fp
         Build lens segment by segment.
         1. dY = lens height / number of lens segments
         2. y = next point for calculating ray angles
@@ -201,9 +202,17 @@ class completeLens():
         pass
 
     def lowerHalf(self, lensPts):
+        """ from finishLens in main
+            1. Create list copyLens to hold positive and negative values for complete lens
+            2. Add (x, y) values of original lens to copyLens
+            3. add (x, -y) values to copyLens for negative values
+            """
+        #1.  Create list copyLens to hold positive and negative values for complete lens
         copyLlens = []
+        #2. Add (x, y) values of original lens to copyLens
         for pt in lensPts:
             copyLlens.append(pt)
+        #3. add (x, -y) values to copyLens for negative values
         for i in range(1, len(lensPts)):
             # print(f"lensPts = {lensPts[i][0], -1*lensPts[i][1]}")
             copyLlens.insert(0, [lensPts[i][0], -1 * lensPts[i][1]])
@@ -219,6 +228,13 @@ class completeLens():
         lowBack = [[lens2XY[0][0], lens2XY[0][1]], [bX, bY]]
         lowLine = [[bX, bY], [lens1XY[0][0], lens1XY[0][1]]]
         return [topLine, topBack, lowBack, lowLine]
+
+    def svgCorners(self, lens1XY, lens2XY):
+        uX, uY = [lens2XY[-1][0] ,lens1XY[-1][1]]
+        bX, bY = [lens2XY[0][0], lens1XY[0][1]]
+        topCorner = [uX, uY]
+        bottomCorner = [bX, bY]
+        return topCorner, bottomCorner
 
 
 #toScreen.copyAndDisplay(lens2)

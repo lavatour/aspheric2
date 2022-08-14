@@ -1,26 +1,38 @@
-import drawSvg as draw
-
-d = draw.Drawing(200, 200, origin='center', displayInline=False)
 
 
+class saveSVG():
+    def __init__(self, width, height, minX, minY, viewBoxWidth, viewBoxHeight, points):
+        self.width = str(width)
+        self.height = str(height)
+        self.vBox = [str(minX), str(minY), str(viewBoxWidth),str(viewBoxHeight)]
+        self.path1 = ""
+        for i in points:
+            if self.path1 == "":
+                self.path1 += 'M' + str(i[0]) + ',' + str(i[1])
+            else:
+                self.path1 += ' L' + str(i[0]) + ',' + str(i[1])
 
-# Draw an irregular polygon
-d.append(draw.Lines(-80, -45, 70, -49,
-                    95, 49,
-                    -90, 40,
-                    60, 40,
-                    -100, 100, 0, 0,
-                    close=False,
-            stroke='black', stroke_width = .5,
-            fill = 'none'))
 
 
-d.setPixelScale(40)  # Set number of pixels per geometry unit
-#d.setRenderSize(400,200)  # Alternative to setPixelScale
-d.saveSvg('example.svg')
-d.savePng('example.png')
 
-# Display in Jupyter notebook
-d.rasterize()  # Display as PNG
-d  # Display as SVG
+
+
+    def writeSVG(self, filename):
+
+        f = open("FP250H100.svg", "a")
+        f.truncate(6)
+        f.write('version="1.0" encoding="UTF-8"?>\n')
+        f.write('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"\n')
+        f.write(f'width="{self.width}" height="{self.height}" viewBox="{self.vBox[0]} {self.vBox[1]} {self.vBox[2]} {self.vBox[3]}">\n')
+        f.write('<defs>\n')
+        f.write('</defs>\n')
+        f.write(f'<path d="{self.path1}" stroke="black" stroke-width="1.0" fill="none" />\n')
+        f.write('</svg>')
+
+
+
+
+
+
+
 
